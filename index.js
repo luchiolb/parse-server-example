@@ -11,6 +11,8 @@ var mailgunApiKey = process.env.MAILGUN_API_KEY;
 var mailgunDomain = process.env.MAILGUN_DOMAIN;
 var mailgunFromAddress = process.env.MAILGUN_FROM_ADDRESS;
 
+var parseServerHomeBody = process.env.PARSE_SERVER_HOME_BODY || '';
+
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
@@ -56,14 +58,14 @@ app.use(mountPath, api);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+  res.status(200).send(parseServerHomeBody);
 });
 
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
-app.get('/test', function(req, res) {
+/*app.get('/test', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/test.html'));
-});
+});*/
 
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
