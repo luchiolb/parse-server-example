@@ -14,32 +14,44 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
         query.count({
             success: function(count) {
                 if (count > 0) {
-                    response.error('Ya realizaste un check-in y aún no hiciste check out.');
+                    response.error('Ya realizaste un Check-In y aún no hiciste Check-Out.');
                 } else {
                     request.object.set("workedHours", 0);
                     response.success();
                 }
             },
             error: function(error) {
-                response.error('Error al intentar grabar el check in.');
+                response.error('Error al intentar grabar el Check-In.');
             }
         });
     } //When Saving License 
     else if (request.object.get('checkOutDate') != null && request.object.get('forReason') != null) {
         //Set CheckOut Seconds to 0
         request.object.get('checkOutDate').setSeconds(0); 
-  
         request.object.set("workedHours", 0);
         response.success();
     } //When Saving CheckOut 
     else {
-        //Set CheckIn Seconds to 0
-        request.object.get('checkOutDate').setSeconds(0); 
-  
-        //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
-        var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
-        request.object.set("workedHours", hours.round(2));
-        response.success();
+        query.equalTo("employee", request.object.get('employee'));
+        query.exists("checkInDate");
+        query.doesNotExist("checkOutDate");
+        query.count({
+            success: function(count) {
+                if (count == 0) {
+                    response.error('No se pudo realizar el Check-Out. Debes realizar un Check-In primero.');
+                } else {
+                	//Set CheckIn Seconds to 0
+			        request.object.get('checkOutDate').setSeconds(0); 
+                    //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
+        			var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
+        			request.object.set("workedHours", hours.round(2));
+        			response.success();
+                }
+            },
+            error: function(error) {
+                response.error('Error al intentar grabar el Check-Out.');
+            }
+        });
     }
 });
 Number.prototype.round = function(places) {
