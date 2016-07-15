@@ -28,29 +28,18 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
     else if (request.object.get('checkOutDate') != null && request.object.get('forReason') != null) {
         //Set CheckOut Seconds to 0
         request.object.get('checkOutDate').setSeconds(0); 
+  
         request.object.set("workedHours", 0);
         response.success();
     } //When Saving CheckOut 
     else {
-        query.equalTo("employee", request.object.get('employee'));
-        query.doesNotExist("checkOutDate");
-        query.count({
-           	success: function(count) {
-                if (count > 0) {
-                	//Set CheckIn Seconds to 0
-			        request.object.get('checkOutDate').setSeconds(0); 
-                    //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
-        			var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
-        			request.object.set("workedHours", hours.round(2));
-        			response.success();
-                } else {
-					response.error('No se pudo realizar el Check-Out. Debes realizar un Check-In primero.');
-                }
-            },
-            error: function(error) {
-                response.error('Error al intentar grabar el Check-Out.');
-            }
-        });
+        //Set CheckIn Seconds to 0
+        request.object.get('checkOutDate').setSeconds(0); 
+  
+        //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
+        var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
+        request.object.set("workedHours", hours.round(2));
+        response.success();
     }
 });
 Number.prototype.round = function(places) {
