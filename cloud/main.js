@@ -33,19 +33,18 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
     } //When Saving CheckOut 
     else {
         query.equalTo("employee", request.object.get('employee'));
-        query.exists("checkInDate");
         query.doesNotExist("checkOutDate");
         query.count({
-            success: function(count) {
-                if (count == 0) {
-                    response.error('No se pudo realizar el Check-Out. Debes realizar un Check-In primero.');
-                } else {
+           	success: function(count) {
+                if (count > 0) {
                 	//Set CheckIn Seconds to 0
 			        request.object.get('checkOutDate').setSeconds(0); 
                     //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
         			var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
         			request.object.set("workedHours", hours.round(2));
         			response.success();
+                } else {
+					response.error('No se pudo realizar el Check-Out. Debes realizar un Check-In primero.');
                 }
             },
             error: function(error) {
