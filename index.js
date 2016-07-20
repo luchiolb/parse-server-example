@@ -7,9 +7,20 @@ var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
-var mailgunApiKey = process.env.MAILGUN_API_KEY;
-var mailgunDomain = process.env.MAILGUN_DOMAIN;
-var mailgunFromAddress = process.env.MAILGUN_FROM_ADDRESS;
+
+var mailgunApiKey = process.env.MAILGUN_API_KEY || '';
+var mailgunDomain = process.env.MAILGUN_DOMAIN || '';
+var mailgunFromAddress = process.env.MAILGUN_FROM_ADDRESS || '';
+
+var passwordResetEmailSubject = process.env.PASSWORD_RESET_EMAIL_SUBJECT || 'Reseteo de password para %appname%';
+var passwordResetEmailBody = process.env.PASSWORD_RESET_EMAIL_BODY || '¡Hola! Solicitaste un reseteo de password para %appname%. Haga click en el siguiente link y siga los pasos: %link% ¡Gracias!';
+var verificationEmailSubject = process.env.VERIFICATION_EMAIL_SUBJECT || 'Por favor verifique su e-mail para %appname%';
+var verificationEmailBody = process.env.VERIFICATION_EMAIL_BODY || '¡Hola! Por favor haga click en el siguiente link para verificar su correo electrónico: %link% ¡Gracias!';
+
+var invalidLinkTemplateUrl = process.env.INVALID_LINK_TEMPLATE_URL || '';
+var verifyEmailSuccessTemplateUrl = process.env.VERIFY_EMAIL_SUCCESS_TEMPLATE_URL || '';
+var choosePasswordTemplateUrl = process.env.CHOOSE_PASSWORD_TEMPLATE_URL || '';
+var passwordResetSuccessTemplateUrl = process.env.PASSWORD_RESET_SUCCESS_TEMPLATE_URL || '';
 
 var parseServerHomeBody = process.env.PARSE_SERVER_HOME_BODY || '';
 
@@ -28,6 +39,12 @@ var api = new ParseServer({
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
   },
+  customPages: {
+    invalidLink: invalidLinkTemplateUrl,
+    verifyEmailSuccess: verifyEmailSuccessTemplateUrl,
+    choosePassword: choosePasswordTemplateUrl,
+    passwordResetSuccess: passwordResetSuccessTemplateUrl
+  },
   // Enable email verification
   verifyUserEmails: true,
   // The email adapter
@@ -35,11 +52,22 @@ var api = new ParseServer({
     module: 'parse-server-simple-mailgun-adapter',
     options: {
       // Your API key from mailgun.com
-      apiKey: mailgunApiKey || '',
+      apiKey: mailgunApiKey,
       // Your domain from mailgun.com
-      domain: mailgunDomain || '',
+      domain: mailgunDomain,
       // The address that your emails come from
-      fromAddress: mailgunFromAddress || ''
+      fromAddress: mailgunFromAddress,
+      // The template section 
+      templates: {
+        passwordResetEmail: {
+          subject: passwordResetEmailSubject,
+          pathPlainText: passwordResetEmailBody
+        },
+        verificationEmail: {
+          subject: verificationEmailSubject,
+          pathPlainText: verificationEmailBody
+        }
+      }
     }
   }
 });
