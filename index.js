@@ -5,6 +5,7 @@ require('newrelic');
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
+const resolve = require('path').resolve;
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 
@@ -12,10 +13,10 @@ var mailgunApiKey = process.env.MAILGUN_API_KEY || '';
 var mailgunDomain = process.env.MAILGUN_DOMAIN || '';
 var mailgunFromAddress = process.env.MAILGUN_FROM_ADDRESS || '';
 
-var passwordResetEmailSubject = process.env.PASSWORD_RESET_EMAIL_SUBJECT || 'Reseteo de password para %appname%';
-var passwordResetEmailBody = process.env.PASSWORD_RESET_EMAIL_BODY || '¡Hola! Solicitaste un reseteo de password para %appname%. Haga click en el siguiente link y siga los pasos: %link% ¡Gracias!';
-var verificationEmailSubject = process.env.VERIFICATION_EMAIL_SUBJECT || 'Por favor verifique su e-mail para %appname%';
-var verificationEmailBody = process.env.VERIFICATION_EMAIL_BODY || '¡Hola! Por favor haga click en el siguiente link para verificar su correo electrónico: %link% ¡Gracias!';
+var passwordResetEmailSubject = process.env.PASSWORD_RESET_EMAIL_SUBJECT || '';
+var passwordResetEmailPath = process.env.PASSWORD_RESET_EMAIL_PATH || '';
+var verificationEmailSubject = process.env.VERIFICATION_EMAIL_SUBJECT || '';
+var verificationEmailPath = process.env.VERIFICATION_EMAIL_PATH || '';
 
 var invalidLinkTemplateUrl = process.env.INVALID_LINK_TEMPLATE_URL || '';
 var verifyEmailSuccessTemplateUrl = process.env.VERIFY_EMAIL_SUCCESS_TEMPLATE_URL || '';
@@ -29,7 +30,7 @@ if (!databaseUri) {
 }
 
 var api = new ParseServer({
-  appName: 'Parse Server',
+  appName: process.env.APP_NAME,
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'myAppId',
@@ -61,11 +62,11 @@ var api = new ParseServer({
       templates: {
         passwordResetEmail: {
           subject: passwordResetEmailSubject,
-          pathPlainText: passwordResetEmailBody
+          pathPlainText: resolve(__dirname, passwordResetEmailPath)
         },
         verificationEmail: {
           subject: verificationEmailSubject,
-          pathPlainText: verificationEmailBody
+          pathPlainText: resolve(__dirname, verificationEmailPath)
         }
       }
     }
