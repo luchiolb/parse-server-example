@@ -72,7 +72,19 @@ var api = new ParseServer({
         }
       }
     }
-  }
+  },
+  push: {
+      /*android: {
+        senderId: '...',
+        apiKey: '...'
+      },*/
+      ios: {
+        pfx: '/public/push/OneClickHR-Push-Password.p12',
+        passphrase: process.env.IOS_PUSH_P12_PASS,
+        bundleId: 'ar.com.oneclick.dev.OneClickHR',
+        production: true
+      }
+    }
 });
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
