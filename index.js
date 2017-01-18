@@ -79,7 +79,7 @@ var api = new ParseServer({
         apiKey: '...'
       },*/
       ios: {
-        pfx: '/public/push/OneClickHR-Push-Password-QA.p12',
+        pfx: 'public/push/OneClickHR-Push-Password-QA.p12',
         passphrase: process.env.IOS_PUSH_P12_PASS,
         bundleId: 'ar.com.oneclick.dev.OneClickHR',
         production: false
