@@ -25,6 +25,9 @@ var passwordResetSuccessTemplateUrl = process.env.PASSWORD_RESET_SUCCESS_TEMPLAT
 
 var parseServerHomeBody = process.env.PARSE_SERVER_HOME_BODY || '';
 
+var p12CertificatePath = process.env.P12_CERTIFICATE_PATH || '';
+var productionPush = process.env.PRODUCTION_PUSH || '';
+
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
@@ -47,7 +50,7 @@ var api = new ParseServer({
     passwordResetSuccess: passwordResetSuccessTemplateUrl
   },
   // Enable email verification
-  verifyUserEmails: true,
+  verifyUserEmails: false,
   // The email adapter
   emailAdapter: {
     module: 'parse-server-simple-mailgun-adapter',
@@ -79,10 +82,10 @@ var api = new ParseServer({
         apiKey: '...'
       },*/
       ios: {
-        pfx: 'public/push/OneClickHR-Push-Password-QA.p12',
+        pfx: p12CertificatePath,
         passphrase: process.env.IOS_PUSH_P12_PASS,
         bundleId: 'ar.com.oneclick.dev.OneClickHR',
-        production: false
+        production: productionPush
       }
     }
 });
