@@ -109,7 +109,7 @@ Parse.Cloud.beforeSave(Parse.User, function(request, response) {
         response.error('Faltan campos.');
     }
 });
-Parse.Cloud.beforeSave('Message', function(request, response) {
+Parse.Cloud.afterSave('Message', function(request) {
     
     if (request.object.createdAt.getTime() === request.object.updatedAt.getTime() && 
         typeof request.object.attributes.sendNotification != 'undefined' && 
