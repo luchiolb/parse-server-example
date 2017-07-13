@@ -111,11 +111,13 @@ Parse.Cloud.beforeSave(Parse.User, function(request, response) {
 });
 Parse.Cloud.afterSave('Message', function(request, response) {
     
-    if (typeof request.object.attributes.sendNotification != 'undefined' && 
+    if (request.object.createdAt.getTime() === request.object.updatedAt.getTime() && 
+        typeof request.object.attributes.sendNotification != 'undefined' && 
         request.object.attributes.sendNotification) {
 
         var notificationConditions = [];
-        var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
+        //var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
+        var notificationMessage = request.object.createdAt.getTime() + " - " + request.object.updatedAt.getTime() + " - " + request.object.attributes.sendNotification;
 
         var countriesArray = request.object.attributes.country.trim().split(" ");
         var citiesArray = request.object.attributes.city.trim().split(" ");
@@ -194,6 +196,5 @@ Parse.Cloud.afterSave('Message', function(request, response) {
                 });
             }
         }
-        request.object.set("sendNotification", false);
     }
 });
