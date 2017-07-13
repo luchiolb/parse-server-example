@@ -116,8 +116,8 @@ Parse.Cloud.afterSave('Message', function(request) {
         request.object.attributes.sendNotification) {
 
         var notificationConditions = [];
-        //var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
-        var notificationMessage = request.object.createdAt.getTime() + " - " + request.object.updatedAt.getTime() + " - " + request.object.attributes.sendNotification;
+        var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
+        //var notificationMessage = request.object.createdAt.getTime() + " - " + request.object.updatedAt.getTime() + " - " + request.object.attributes.sendNotification;
 
         var countriesArray = request.object.attributes.country.trim().split(" ");
         var citiesArray = request.object.attributes.city.trim().split(" ");
