@@ -109,3 +109,88 @@ Parse.Cloud.beforeSave(Parse.User, function(request, response) {
         response.error('Faltan campos.');
     }
 });
+Parse.Cloud.afterSave('Message', function(request, response) {
+    
+    if (request.object.attributes.sendNotification) {
+        var notificationConditions = [];
+        var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
+
+        var countriesArray = request.object.attributes.country.trim().split(" ");
+        var citiesArray = request.object.attributes.city.trim().split(" ");
+        var storeArray = request.object.attributes.storeLocation.trim().split(" ");
+        var positionsArray = request.object.attributes.employeePosition.trim().split(" ");
+        var empIdsArray = request.object.attributes.employeeIds.trim().split(" ");
+
+        if (countriesArray.length > 0 && countriesArray[0] !== "") {
+            for (var i = 0; i < countriesArray.length; i++) {
+                notificationConditions.push(countriesArray[i]);
+            }
+        }
+        if (citiesArray.length > 0 && citiesArray[0] !== "") {
+            for (var i = 0; i < citiesArray.length; i++) {
+                notificationConditions.push(citiesArray[i]);
+            }
+        }
+        if (storeArray.length > 0 && storeArray[0] !== "") {
+            for (var i = 0; i < storeArray.length; i++) {
+                notificationConditions.push(storeArray[i]);
+            }
+        }
+        if (empIdsArray.length > 0 && empIdsArray[0] !== "") {
+            for (var i = 0; i < empIdsArray.length; i++) {
+                notificationConditions.push(empIdsArray[i]);
+            }
+        }
+
+        if (positionsArray.length > 0 && positionsArray[0] !== "") {
+
+            for (var i = 0; i < positionsArray.length; i++) {
+                for (var j = 0; j < notificationConditions.length; j++) {
+                    var query = new Parse.Query(Parse.Installation);
+                    var values = [];
+
+                    values.push(positionsArray[i]);
+                    values.push(notificationConditions[j]);
+
+                    query.containsAll('channels', values);
+
+                    Parse.Push.send({
+                      where: query,
+                      data: {
+                        alert: notificationMessage,
+                        badge: 1,
+                        sound: 'default'
+                      }
+                    }, { 
+                        useMasterKey: true 
+                    }).then(() => {
+                        console.log('Push ok');
+                    }, (e) => {
+                        console.log('Push error', e);
+                    });
+                }
+            }
+        } else {
+            for (var i = 0; i < notificationConditions.length; i++) {
+                var query = new Parse.Query(Parse.Installation);
+
+                query.contains('channels', notificationConditions[i]);
+
+                Parse.Push.send({
+                  where: query,
+                  data: {
+                    alert: notificationMessage,
+                    badge: 1,
+                    sound: 'default'
+                  }
+                }, { 
+                    useMasterKey: true 
+                }).then(() => {
+                    console.log('Push ok');
+                }, (e) => {
+                    console.log('Push error', e);
+                });
+            }
+        }
+    }
+});

@@ -77,10 +77,10 @@ var api = new ParseServer({
     }
   },
   push: {
-      /*android: {
-        senderId: '...',
-        apiKey: '...'
-      },*/
+      android: {
+        senderId: process.env.ANDROID_PUSH_SENDER_ID,
+        apiKey: process.env.ANDROID_PUSH_API_KEY
+      },
       ios: {
         pfx: p12CertificatePath,
         passphrase: process.env.IOS_PUSH_P12_PASS,
