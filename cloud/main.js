@@ -116,14 +116,14 @@ Parse.Cloud.afterSave('Message', function(request) {
         request.object.attributes.sendNotification) {
 
         var notificationConditions = [];
-        var notificationMessage = request.object.attributes.title + "\n\nCheck your message board for more details";
-        //var notificationMessage = request.object.createdAt.getTime() + " - " + request.object.updatedAt.getTime() + " - " + request.object.attributes.sendNotification;
+        var notificationMessage = request.object.attributes.title + "\n\n";
 
         var countriesArray = request.object.attributes.country.trim().split(" ");
         var citiesArray = request.object.attributes.city.trim().split(" ");
         var storeArray = request.object.attributes.storeLocation.trim().split(" ");
         var positionsArray = request.object.attributes.employeePosition.trim().split(" ");
         var empIdsArray = request.object.attributes.employeeIds.trim().split(" ");
+        var countryCodesArray = request.object.attributes.countryCode.trim().split(" ");
 
         if (countriesArray.length > 0 && countriesArray[0] !== "") {
             for (var i = 0; i < countriesArray.length; i++) {
@@ -144,6 +144,12 @@ Parse.Cloud.afterSave('Message', function(request) {
             for (var i = 0; i < empIdsArray.length; i++) {
                 notificationConditions.push(empIdsArray[i]);
             }
+        }
+
+        if (countryCodesArray.includes("us")) {
+            notificationMessage = notificationMessage + process.env.PUSH_MESSAGE_LABEL_EN;
+        } else {
+            notificationMessage = notificationMessage + process.env.PUSH_MESSAGE_LABEL_EN;
         }
 
         if (positionsArray.length > 0 && positionsArray[0] !== "") {
