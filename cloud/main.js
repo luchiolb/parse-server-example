@@ -149,7 +149,7 @@ Parse.Cloud.afterSave('Message', function(request) {
         if (countryCodesArray.includes("us")) {
             notificationMessage = notificationMessage + process.env.PUSH_MESSAGE_LABEL_EN;
         } else {
-            notificationMessage = notificationMessage + process.env.PUSH_MESSAGE_LABEL_EN;
+            notificationMessage = notificationMessage + process.env.PUSH_MESSAGE_LABEL_ES;
         }
 
         if (positionsArray.length > 0 && positionsArray[0] !== "") {
