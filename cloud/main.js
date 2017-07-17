@@ -123,7 +123,7 @@ Parse.Cloud.afterSave('Message', function(request) {
         var storeArray = request.object.attributes.storeLocation.trim().split(" ");
         var positionsArray = request.object.attributes.employeePosition.trim().split(" ");
         var empIdsArray = request.object.attributes.employeeIds.trim().split(" ");
-        var countryCodesArray = request.object.attributes.countryCode.trim().split(" ");
+        var countryCodesArray = request.object.attributes.countryCode;
 
         if (countriesArray.length > 0 && countriesArray[0] !== "") {
             for (var i = 0; i < countriesArray.length; i++) {
