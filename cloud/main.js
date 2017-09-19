@@ -204,3 +204,29 @@ Parse.Cloud.afterSave('Message', function(request) {
         }
     }
 });
+
+Parse.Cloud.define('deleteUser', function(request, response) {
+    var objectId = request.params.userObjectId;
+
+    if(!objectId || objectId.length === 0 || !objectId.trim()) {
+        response.error("The user object id is needed to perform this action.");
+    }
+
+    var query = new Parse.Query(Parse.User);
+    
+    query.get(objectId, {
+      useMasterKey: true, //HERE (1/2)
+      success: function(user) {
+        user.destroy({
+          useMasterKey: true, //HERE (2/2)
+          success: response.success(user),
+          error: function(user, error) {
+            response.error(error);
+          }
+        });
+      },
+      error: function(error) {
+        response.error("Could not find the user.");
+      }
+    });
+});
