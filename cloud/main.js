@@ -4,7 +4,7 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
     var query = new Parse.Query(record);
   
     //Setting seconds to 0
-    request.object.get('checkInDate').setSeconds(0); 
+    //request.object.get('checkInDate').setSeconds(0); 
   
     //When Saving checkIn
     if (request.object.get('checkOutDate') == null) {
@@ -16,7 +16,13 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
                 if (count > 0) {
                     response.error('Ya realizaste un Check-In y aún no hiciste Check-Out.');
                 } else {
+                    var checkInDate = new Date();
+
+                    checkInDate.setSeconds(0);
+
                     request.object.set("workedHours", 0);
+                    request.object.set("checkInDate", checkInDate);
+
                     response.success();
                 }
             },
@@ -33,12 +39,19 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
         response.success();
     } //When Saving CheckOut 
     else {
+        var checkOutDate = new Date();
+
         //Set CheckIn Seconds to 0
-        request.object.get('checkOutDate').setSeconds(0); 
+        //request.object.get('checkOutDate').setSeconds(0);
+        checkOutDate.setSeconds(0);
   
         //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
-        var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
+        //var hours = Math.abs(request.object.get('checkOutDate') - request.object.get('checkInDate')) / 36e5;
+        var hours = Math.abs(checkOutDate - request.object.get('checkInDate')) / 36e5;
+
         request.object.set("workedHours", hours.round(2));
+        request.object.set("checkOutDate", checkOutDate);
+
         response.success();
     }
 });
