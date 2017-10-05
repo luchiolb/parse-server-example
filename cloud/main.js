@@ -47,12 +47,14 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
         }
 
         //Set CheckIn Seconds to 0
+        request.object.get('checkInDate').setSeconds(0);
         checkOutDate.setSeconds(0);
   
         //Get the difference between checkIn and CheckOut. Rounded to 2 decimals.
         var hours = Math.abs(checkOutDate - request.object.get('checkInDate')) / 36e5;
 
         request.object.set("workedHours", hours.round(2));
+        request.object.set("checkInDate", request.object.get('checkInDate'));
         request.object.set("checkOutDate", checkOutDate);
 
         response.success();
