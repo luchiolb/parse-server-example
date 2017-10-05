@@ -39,7 +39,7 @@ Parse.Cloud.beforeSave('Record', function(request, response) {
         var checkOutDate = '';
 
         //Modifying record from Web
-        if (request.object.get('wasModified')) {
+        if (request.object.get('wasModified') || request.object.get('wasWeb')) {
             checkOutDate = request.object.get('checkOutDate');
         } else { 
             //New checkout date
