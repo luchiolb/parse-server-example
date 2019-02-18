@@ -52,7 +52,7 @@ var api = new ParseServer({
   // Enable email verification
   verifyUserEmails: false,
   // The email adapter
-  emailAdapter: {
+  /*emailAdapter: {
     module: 'parse-server-simple-mailgun-adapter',
     options: {
       // Your API key from mailgun.com
@@ -75,7 +75,7 @@ var api = new ParseServer({
         }
       }
     }
-  },
+  },*/
   push: {
       android: {
         senderId: process.env.ANDROID_PUSH_SENDER_ID,
